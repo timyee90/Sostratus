@@ -73,7 +73,6 @@ app.get('/reviews/:id/meta', (req, res) => {
 });
 
 app.post('/reviews/:product_id', (req, res) => {
-  console.log(`BODY: `, req.body);
   const body = req.body;
   const postDate = new Date();
   const product_id = parseInt(req.params.product_id);
@@ -130,14 +129,6 @@ app.post('/reviews/:product_id', (req, res) => {
       }
 
       Promise.all(promiseArray)
-        .then((result) => {
-          console.log(
-            `promifise all done: `,
-            result.map((data) => {
-              return data.rows;
-            })
-          );
-        })
         .then(() => {
           res.sendStatus(201);
         })
@@ -161,7 +152,6 @@ app.put('/reviews/helpful/:review_id', (req, res) => {
     [review_id]
   )
     .then((data) => {
-      console.log(`POSTED: `, data);
       res.sendStatus(204);
     })
     .catch((err) => {
@@ -180,7 +170,6 @@ app.put('/reviews/report/:review_id', (req, res) => {
     [review_id]
   )
     .then((data) => {
-      console.log(`POSTED: `, data);
       res.sendStatus(204);
     })
     .catch((err) => {

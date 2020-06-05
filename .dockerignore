@@ -3,3 +3,8 @@ node_modules
 pgdata
 temp
 database/config.js
+reviews_transformed.csv
+Reviews_ETL.ipynb
+.ipynb_checkpoints
+.DS_Store
+.git
