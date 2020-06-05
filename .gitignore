@@ -1,0 +1,7 @@
+package-lock.json
+node_modules
+pgdata
+database/config.js
+temp
+bind
+.ipynb_checkpoints

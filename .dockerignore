@@ -1,0 +1,5 @@
+package-lock.json
+node_modules
+pgdata
+temp
+database/config.js
