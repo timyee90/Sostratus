@@ -39,6 +39,7 @@ app.get('/reviews/:id/list', (req, res) => {
     })
     .catch((err) => {
       console.log(`ERROR: `, err);
+      res.sendStatus(500);
     });
 });
 
@@ -73,6 +74,7 @@ app.get('/reviews/:id/meta', (req, res) => {
     })
     .catch((err) => {
       console.log(`ERROR: `, err);
+      res.sendStatus(500);
     });
 });
 
