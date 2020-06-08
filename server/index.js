@@ -8,7 +8,7 @@ const port = 3000;
 
 const db = require('../database/index.js');
 
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 app.use(bodyParser.json());
 // app.use(compression());
 
