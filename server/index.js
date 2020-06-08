@@ -12,8 +12,8 @@ const db = require('../database/index.js');
 app.use(bodyParser.json());
 // app.use(compression());
 
-app.get('/loaderio-820cb9cbd70f872ef4ee682fe7f804d2', (req, res) => {
-  res.send('loaderio-820cb9cbd70f872ef4ee682fe7f804d2');
+app.get('/loaderio-21c2ba399478b759eda50faac924cf7b', (req, res) => {
+  res.send('/loaderio-21c2ba399478b759eda50faac924cf7b');
 });
 
 app.get('/reviews/:id/list', (req, res) => {
