@@ -7,6 +7,9 @@ const pool = new Pool({
   database: 'reviews',
   password: config.password,
   port: 5432,
+  max: 20,
+  idleTimeoutMillis: 10000,
+  connectionTimeoutMillis: 0,
 });
 
 module.exports = {

@@ -10,7 +10,7 @@ const db = require('../database/index.js');
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(compression());
+// app.use(compression());
 
 app.get('/loaderio-820cb9cbd70f872ef4ee682fe7f804d2', (req, res) => {
   res.send('loaderio-820cb9cbd70f872ef4ee682fe7f804d2');
@@ -22,8 +22,7 @@ app.get('/reviews/:id/list', (req, res) => {
     p.photos
     FROM reviews r
 	  LEFT JOIN
-    (SELECT  json_agg(json_build_object('id', id, 'url', url)) photos, review_id   FROM reviews_photos
- 	  group by review_id) p ON r.review_id = p.review_id
+    photos_agg p ON r.review_id = p.review_id
 	  WHERE r.product_id = $1;`,
     [req.params.id]
   )
