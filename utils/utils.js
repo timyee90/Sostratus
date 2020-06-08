@@ -12,7 +12,7 @@ module.exports.countOccurrence = (array, value) => {
 };
 
 module.exports.characteristicsMeta = (data) => {
-  return data.reduce((acc, arr) => {
+  const results = data.reduce((acc, arr) => {
     arr.forEach((item) => {
       if (!acc.hasOwnProperty(item.name)) {
         acc[item.name] = {
@@ -29,4 +29,9 @@ module.exports.characteristicsMeta = (data) => {
     });
     return acc;
   }, {});
+
+  for (let key in results) {
+    results[key].value = results[key].value.toFixed(4);
+  }
+  return results;
 };

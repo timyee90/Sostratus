@@ -44,28 +44,24 @@ app.get('/reviews/:id/list', (req, res) => {
 
 app.get('/reviews/:id/meta', (req, res) => {
   const product_id = req.params.id;
-  db.query(
-    `SELECT r.rating, r.recommend, r.review_id, d.characteristics
-    FROM reviews r
-    JOIN 
-    (SELECT a.review_id, json_agg(json_build_object( 
-                      'characteristic_id', characteristic_id, 
-                      'name', name, 'value', value)) as characteristics
-    FROM
-    (SELECT cr.review_id, cr.characteristic_id, c.name, cr.value AS value 
-    FROM characteristics c 
-    INNER JOIN characteristic_reviews cr ON c.id = cr.characteristic_id
-    WHERE c.product_id = $1) a
-    GROUP BY a.review_id) d
-    ON r.review_id = d.review_id
+  const promiseArray = [
+    db.query(
+      `SELECT rating, recommend
+    FROM reviews
     WHERE product_id = $1;`,
-    [product_id]
-  )
+      [product_id]
+    ),
+    db.query(
+      `select review_id, characteristics from characteristics_meta where product_id = $1`,
+      [product_id]
+    ),
+  ];
+  Promise.all(promiseArray)
     .then((data) => {
-      const ratings = countOccurrence(data.rows, 'rating');
-      const recommended = countOccurrence(data.rows, 'recommend');
+      const ratings = countOccurrence(data[0].rows, 'rating');
+      const recommended = countOccurrence(data[0].rows, 'recommend');
       const characteristics = characteristicsMeta(
-        data.rows.map((item) => {
+        data[1].rows.map((item) => {
           return item.characteristics;
         })
       );
