@@ -3,20 +3,46 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const compression = require('compression');
+const redis = require('redis');
 const app = express();
 const port = 3000;
+const redis_client = redis.createClient({
+  host: 'redis-server',
+  port: 6379,
+});
+
+redis_client.on('error', (err) => {
+  console.log(`Error: `, err);
+});
 
 const db = require('../database/index.js');
 
-// app.use(morgan('dev'));
+app.use(morgan('dev'));
 app.use(bodyParser.json());
-// app.use(compression());
+app.use(compression());
 
-app.get('/loaderio-21c2ba399478b759eda50faac924cf7b', (req, res) => {
-  res.send('/loaderio-21c2ba399478b759eda50faac924cf7b');
+app.get('/loaderio-2f2f74be8b69c189956532b3e6727f3b', (req, res) => {
+  res.send('loaderio-2f2f74be8b69c189956532b3e6727f3b');
 });
 
-app.get('/reviews/:id/list', (req, res) => {
+const inCache = (req, res, next) => {
+  const url = req.originalUrl;
+
+  redis_client.get(url, (err, data) => {
+    if (err) {
+      console.log(`Error: `, err);
+      res.send(500);
+    }
+    if (data !== null && data !== undefined) {
+      res.send(JSON.parse(data));
+    } else {
+      next();
+    }
+  });
+};
+
+app.get('/reviews/:id/list', inCache, (req, res) => {
+  const url = req.originalUrl;
   db.query(
     `SELECT r.review_id, r.rating, r.summary, r.recommend, r.response, r.body, r.date, r.reviewer_name, r.helpfulness,
     p.photos
@@ -29,20 +55,24 @@ app.get('/reviews/:id/list', (req, res) => {
     .then((data) => {
       const page = Number(req.query.page) || 1;
       const count = Number(req.query.count) || 5;
-      res.send({
+      const result = {
         product: req.params.id.toString(),
         page: page - 1,
         count,
         results: data.rows.slice((page - 1) * count, page * count),
-      });
+      };
+
+      redis_client.set(url, JSON.stringify(result));
+      res.send(result);
     })
     .catch((err) => {
-      console.log(`ERROR: `, err);
+      console.log(`ERROR in redis fetch: `, err);
       res.sendStatus(500);
     });
 });
 
-app.get('/reviews/:id/meta', (req, res) => {
+app.get('/reviews/:id/meta', inCache, (req, res) => {
+  const url = req.originalUrl;
   const product_id = req.params.id;
   const promiseArray = [
     db.query(
@@ -65,10 +95,12 @@ app.get('/reviews/:id/meta', (req, res) => {
           return item.characteristics;
         })
       );
-      res.send({ product_id, ratings, recommended, characteristics });
+      const results = { product_id, ratings, recommended, characteristics };
+      redis_client.set(url, JSON.stringify(results));
+      res.send(results);
     })
     .catch((err) => {
-      console.log(`ERROR: `, err);
+      console.log(`ERROR fetching from postgres: `, err);
       res.sendStatus(500);
     });
 });
