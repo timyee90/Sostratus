@@ -2,7 +2,7 @@ package-lock.json
 node_modules
 pgdata
 temp
-database/config.js
+# database/config.js
 reviews_transformed.csv
 Reviews_ETL.ipynb
 .ipynb_checkpoints

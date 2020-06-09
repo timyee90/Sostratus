@@ -3,7 +3,7 @@ const { config } = require('./config.js');
 
 const pool = new Pool({
   user: 'admin',
-  host: 'postgres',
+  host: process.env.dburl,
   database: 'reviews',
   password: config.password,
   port: 5432,
