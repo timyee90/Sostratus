@@ -13,7 +13,8 @@ Technologies:
 
 ## Backend Architecture
 
+![img](./Sostratus_architecture.PNG)
 
-### Stress testing with Loader.io
+## Stress testing with Loader.io
 
 ![img](./1000k-nginx-cached.png)
